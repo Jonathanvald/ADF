@@ -1,0 +1,32 @@
+{
+	"name": "TR_Ingest_ecdc_data",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "PL_HTTPS_to_DBLake",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 3,
+				"startTime": "2021-02-05T04:32:00",
+				"timeZone": "Central Standard Time (Mexico)",
+				"schedule": {
+					"minutes": [
+						0
+					],
+					"hours": [
+						11
+					]
+				}
+			}
+		}
+	}
+}
