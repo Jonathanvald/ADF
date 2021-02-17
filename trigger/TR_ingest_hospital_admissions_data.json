@@ -1,0 +1,29 @@
+{
+	"name": "TR_ingest_hospital_admissions_data",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "PL_HTTPS_to_DBLake_Parameters",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"sourceRelativeURL": "covid19/nationalcasedeath/csv",
+					"sinkFileName": "cases_deaths.csv",
+					"sourceBaseURL": "https://www.ecdc.europa.eu"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 1,
+				"startTime": "2021-02-04T19:15:00",
+				"timeZone": "Central Standard Time (Mexico)"
+			}
+		}
+	}
+}
