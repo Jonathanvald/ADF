@@ -4,6 +4,7 @@
 		"activities": [
 			{
 				"name": "Lookup1",
+				"description": "this is a change in collaboration",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
