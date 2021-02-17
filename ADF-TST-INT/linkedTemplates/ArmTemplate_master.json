@@ -1,0 +1,91 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "ADF-TST-INT"
+		},
+		"LS_BlobStorage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_BlobStorage'"
+		},
+		"ls_AzureDataLakeStorage_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_AzureDataLakeStorage'"
+		},
+		"ls_AzureDataLakeStorage_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://adfcovidrepo.dfs.core.windows.net"
+		},
+		"ls_http_covid_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "@{linkedService().sourceBaseURL}"
+		},
+		"TR_ingest_hospital_admissions_data_properties_PL_HTTPS_to_DBLake_Parameters_parameters_sourceRelativeURL": {
+			"type": "string",
+			"defaultValue": "covid19/nationalcasedeath/csv"
+		},
+		"TR_ingest_hospital_admissions_data_properties_PL_HTTPS_to_DBLake_Parameters_parameters_sinkFileName": {
+			"type": "string",
+			"defaultValue": "cases_deaths.csv"
+		},
+		"TR_ingest_hospital_admissions_data_properties_PL_HTTPS_to_DBLake_Parameters_parameters_sourceBaseURL": {
+			"type": "string",
+			"defaultValue": "https://www.ecdc.europa.eu"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "ADF-TST-INT_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"LS_BlobStorage_connectionString": {
+						"value": "[parameters('LS_BlobStorage_connectionString')]"
+					},
+					"ls_AzureDataLakeStorage_accountKey": {
+						"value": "[parameters('ls_AzureDataLakeStorage_accountKey')]"
+					},
+					"ls_AzureDataLakeStorage_properties_typeProperties_url": {
+						"value": "[parameters('ls_AzureDataLakeStorage_properties_typeProperties_url')]"
+					},
+					"ls_http_covid_properties_typeProperties_url": {
+						"value": "[parameters('ls_http_covid_properties_typeProperties_url')]"
+					},
+					"TR_ingest_hospital_admissions_data_properties_PL_HTTPS_to_DBLake_Parameters_parameters_sourceRelativeURL": {
+						"value": "[parameters('TR_ingest_hospital_admissions_data_properties_PL_HTTPS_to_DBLake_Parameters_parameters_sourceRelativeURL')]"
+					},
+					"TR_ingest_hospital_admissions_data_properties_PL_HTTPS_to_DBLake_Parameters_parameters_sinkFileName": {
+						"value": "[parameters('TR_ingest_hospital_admissions_data_properties_PL_HTTPS_to_DBLake_Parameters_parameters_sinkFileName')]"
+					},
+					"TR_ingest_hospital_admissions_data_properties_PL_HTTPS_to_DBLake_Parameters_parameters_sourceBaseURL": {
+						"value": "[parameters('TR_ingest_hospital_admissions_data_properties_PL_HTTPS_to_DBLake_Parameters_parameters_sourceBaseURL')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}

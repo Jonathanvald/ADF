@@ -1,0 +1,30 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "ADF-TST-INT"
+		},
+		"LS_BlobStorage_connectionString": {
+			"value": ""
+		},
+		"ls_AzureDataLakeStorage_accountKey": {
+			"value": ""
+		},
+		"ls_AzureDataLakeStorage_properties_typeProperties_url": {
+			"value": "https://adfcovidrepo.dfs.core.windows.net"
+		},
+		"ls_http_covid_properties_typeProperties_url": {
+			"value": "@{linkedService().sourceBaseURL}"
+		},
+		"TR_ingest_hospital_admissions_data_properties_PL_HTTPS_to_DBLake_Parameters_parameters_sourceRelativeURL": {
+			"value": "covid19/nationalcasedeath/csv"
+		},
+		"TR_ingest_hospital_admissions_data_properties_PL_HTTPS_to_DBLake_Parameters_parameters_sinkFileName": {
+			"value": "cases_deaths.csv"
+		},
+		"TR_ingest_hospital_admissions_data_properties_PL_HTTPS_to_DBLake_Parameters_parameters_sourceBaseURL": {
+			"value": "https://www.ecdc.europa.eu"
+		}
+	}
+}
