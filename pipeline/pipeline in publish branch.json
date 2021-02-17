@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "PL_Publish_TL",
+				"name": "PL_Publish",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
