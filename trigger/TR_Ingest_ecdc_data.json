@@ -23,18 +23,11 @@
 		"type": "ScheduleTrigger",
 		"typeProperties": {
 			"recurrence": {
-				"frequency": "Day",
-				"interval": 5,
+				"frequency": "Minute",
+				"interval": 15,
 				"startTime": "2021-02-05T04:32:00",
-				"timeZone": "Central Standard Time (Mexico)",
-				"schedule": {
-					"minutes": [
-						0
-					],
-					"hours": [
-						11
-					]
-				}
+				"endTime": "2021-02-23T16:02:00",
+				"timeZone": "Central Standard Time (Mexico)"
 			}
 		}
 	}
