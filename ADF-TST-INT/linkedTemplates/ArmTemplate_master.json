@@ -23,6 +23,10 @@
 			"type": "string",
 			"defaultValue": "@{linkedService().sourceBaseURL}"
 		},
+		"TR_Ingest_ecdc_data_properties_PL_HTTPS_to_DBLake_copy1_parameters_StartTime": {
+			"type": "string",
+			"defaultValue": "hjg"
+		},
 		"TR_ingest_hospital_admissions_data_properties_PL_HTTPS_to_DBLake_Parameters_parameters_sourceRelativeURL": {
 			"type": "string",
 			"defaultValue": "covid19/nationalcasedeath/csv"
@@ -73,6 +77,9 @@
 					},
 					"ls_http_covid_properties_typeProperties_url": {
 						"value": "[parameters('ls_http_covid_properties_typeProperties_url')]"
+					},
+					"TR_Ingest_ecdc_data_properties_PL_HTTPS_to_DBLake_copy1_parameters_StartTime": {
+						"value": "[parameters('TR_Ingest_ecdc_data_properties_PL_HTTPS_to_DBLake_copy1_parameters_StartTime')]"
 					},
 					"TR_ingest_hospital_admissions_data_properties_PL_HTTPS_to_DBLake_Parameters_parameters_sourceRelativeURL": {
 						"value": "[parameters('TR_ingest_hospital_admissions_data_properties_PL_HTTPS_to_DBLake_Parameters_parameters_sourceRelativeURL')]"
