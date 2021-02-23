@@ -123,7 +123,7 @@
 						}
 					},
 					"dataset": {
-						"referenceName": "DS_ecdc_filelist",
+						"referenceName": "DS_ECDC_FileList",
 						"type": "DatasetReference"
 					},
 					"firstRowOnly": false

@@ -1,5 +1,5 @@
 {
-	"name": "DS_ecdc_filelist",
+	"name": "DS_ECDC_FileList",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LS_BlobStorage",
