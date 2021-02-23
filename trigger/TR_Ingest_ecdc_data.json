@@ -9,6 +9,15 @@
 					"referenceName": "PL_HTTPS_to_DBLake",
 					"type": "PipelineReference"
 				}
+			},
+			{
+				"pipelineReference": {
+					"referenceName": "PL_HTTPS_to_DBLake_copy1",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"StartTime": "hjg"
+				}
 			}
 		],
 		"type": "ScheduleTrigger",
