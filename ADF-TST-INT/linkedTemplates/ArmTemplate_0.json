@@ -41,20 +41,23 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/AutoResolveIntegrationRuntime')]",
-			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"name": "[concat(parameters('factoryName'), '/EveningTrigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"type": "Managed",
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"type": "TumblingWindowTrigger",
 				"typeProperties": {
-					"computeProperties": {
-						"location": "AutoResolve",
-						"dataFlowProperties": {
-							"computeType": "General",
-							"coreCount": 8,
-							"timeToLive": 0
-						}
-					}
+					"frequency": "Hour",
+					"interval": 24,
+					"startTime": "2021-02-23T23:31:00Z",
+					"delay": "00:00:00",
+					"maxConcurrency": 50,
+					"retryPolicy": {
+						"intervalInSeconds": 30
+					},
+					"dependsOn": []
 				}
 			},
 			"dependsOn": []
@@ -83,23 +86,20 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/EveningTrigger')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
+			"name": "[concat(parameters('factoryName'), '/AutoResolveIntegrationRuntime')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"annotations": [],
-				"runtimeState": "Stopped",
-				"type": "TumblingWindowTrigger",
+				"type": "Managed",
 				"typeProperties": {
-					"frequency": "Hour",
-					"interval": 24,
-					"startTime": "2021-02-23T23:31:00Z",
-					"delay": "00:00:00",
-					"maxConcurrency": 50,
-					"retryPolicy": {
-						"intervalInSeconds": 30
-					},
-					"dependsOn": []
+					"computeProperties": {
+						"location": "AutoResolve",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 0
+						}
+					}
 				}
 			},
 			"dependsOn": []
@@ -714,64 +714,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/DS_Transform_Cases')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "DF_RowCasesDeaths",
-								"type": "DatasetReference"
-							},
-							"name": "source1"
-						},
-						{
-							"dataset": {
-								"referenceName": "DS_CountryLookup",
-								"type": "DatasetReference"
-							},
-							"name": "CountryLookup"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "DS_ProcessedCases",
-								"type": "DatasetReference"
-							},
-							"name": "Cases"
-						}
-					],
-					"transformations": [
-						{
-							"name": "FilterAmerica"
-						},
-						{
-							"name": "SelectRequireFields"
-						},
-						{
-							"name": "PivotCounts"
-						},
-						{
-							"name": "LookupCountry"
-						},
-						{
-							"name": "SelectToSink"
-						}
-					],
-					"script": "source(output(\n\t\tcountry as string,\n\t\tcountry_code as string,\n\t\tcontinent as string,\n\t\tpopulation as integer,\n\t\tindicator as string,\n\t\tweekly_count as integer,\n\t\tyear_week as string,\n\t\trate_14_day as double,\n\t\tDate as string,\n\t\tcumulative_count as integer,\n\t\tsource as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nsource(output(\n\t\tcountry as string,\n\t\tcountry_code_2_digit as string,\n\t\tcountry_code_3_digit as string,\n\t\tcontinent as string,\n\t\tpopulation as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> CountryLookup\nsource1 filter(continent == 'America' && not(isNull(country_code))) ~> FilterAmerica\nFilterAmerica select(mapColumn(\n\t\tcountry,\n\t\tcountry_code,\n\t\tcontinent,\n\t\tpopulation,\n\t\tindicator,\n\t\tweekly_count,\n\t\tyear_week,\n\t\trate_14_day,\n\t\tDate,\n\t\tcumulative_count,\n\t\tsource,\n\t\teach(match(name=='Date'),\n\t\t\t'reported_date' = $$)\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> SelectRequireFields\nSelectRequireFields pivot(groupBy(country,\n\t\tcountry_code,\n\t\tpopulation,\n\t\tsource,\n\t\treported_date,\n\t\tCountry_Special = country+country_code),\n\tpivotBy(continent),\n\tCount = sum(cumulative_count),\n\tcolumnNaming: '$V_$N',\n\tlateral: false) ~> PivotCounts\nPivotCounts, CountryLookup lookup(PivotCounts@country == CountryLookup@country,\n\tmultiple: false,\n\tpickup: 'any',\n\tbroadcast: 'auto')~> LookupCountry\nLookupCountry select(mapColumn(\n\t\tcountry = PivotCounts@country,\n\t\tcountry_code,\n\t\tpopulation = PivotCounts@population,\n\t\tsource,\n\t\treported_date,\n\t\tCountry_Special,\n\t\tcountry = CountryLookup@country,\n\t\tcountry_code_2_digit,\n\t\tcountry_code_3_digit,\n\t\tcontinent,\n\t\tpopulation = CountryLookup@population\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectToSink\nSelectToSink sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\ttruncate: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Cases"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DF_RowCasesDeaths')]",
-				"[concat(variables('factoryId'), '/datasets/DS_CountryLookup')]",
-				"[concat(variables('factoryId'), '/datasets/DS_ProcessedCases')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/PL_HTTPS_to_DBLake_copy1')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -921,6 +863,64 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DS_Transform_Cases')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "DF_RowCasesDeaths",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						},
+						{
+							"dataset": {
+								"referenceName": "DS_CountryLookup",
+								"type": "DatasetReference"
+							},
+							"name": "CountryLookup"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DS_ProcessedCases",
+								"type": "DatasetReference"
+							},
+							"name": "Cases"
+						}
+					],
+					"transformations": [
+						{
+							"name": "FilterAmerica"
+						},
+						{
+							"name": "SelectRequireFields"
+						},
+						{
+							"name": "PivotCounts"
+						},
+						{
+							"name": "LookupCountry"
+						},
+						{
+							"name": "SelectToSink"
+						}
+					],
+					"script": "source(output(\n\t\tcountry as string,\n\t\tcountry_code as string,\n\t\tcontinent as string,\n\t\tpopulation as integer,\n\t\tindicator as string,\n\t\tweekly_count as integer,\n\t\tyear_week as string,\n\t\trate_14_day as double,\n\t\tDate as string,\n\t\tcumulative_count as integer,\n\t\tsource as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nsource(output(\n\t\tcountry as string,\n\t\tcountry_code_2_digit as string,\n\t\tcountry_code_3_digit as string,\n\t\tcontinent as string,\n\t\tpopulation as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> CountryLookup\nsource1 filter(continent == 'America' && not(isNull(country_code))) ~> FilterAmerica\nFilterAmerica select(mapColumn(\n\t\tcountry,\n\t\tcountry_code,\n\t\tcontinent,\n\t\tpopulation,\n\t\tindicator,\n\t\tweekly_count,\n\t\tyear_week,\n\t\trate_14_day,\n\t\tDate,\n\t\tcumulative_count,\n\t\tsource,\n\t\teach(match(name=='Date'),\n\t\t\t'reported_date' = $$)\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> SelectRequireFields\nSelectRequireFields pivot(groupBy(country,\n\t\tcountry_code,\n\t\tpopulation,\n\t\tsource,\n\t\treported_date,\n\t\tCountry_Special = country+country_code),\n\tpivotBy(continent),\n\tCount = sum(cumulative_count),\n\tcolumnNaming: '$V_$N',\n\tlateral: false) ~> PivotCounts\nPivotCounts, CountryLookup lookup(PivotCounts@country == CountryLookup@country,\n\tmultiple: false,\n\tpickup: 'any',\n\tbroadcast: 'auto')~> LookupCountry\nLookupCountry select(mapColumn(\n\t\tcountry = PivotCounts@country,\n\t\tcountry_code,\n\t\tpopulation = PivotCounts@population,\n\t\tsource,\n\t\treported_date,\n\t\tCountry_Special,\n\t\tcountry = CountryLookup@country,\n\t\tcountry_code_2_digit,\n\t\tcountry_code_3_digit,\n\t\tcontinent,\n\t\tpopulation = CountryLookup@population\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectToSink\nSelectToSink sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\ttruncate: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Cases"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DF_RowCasesDeaths')]",
+				"[concat(variables('factoryId'), '/datasets/DS_CountryLookup')]",
+				"[concat(variables('factoryId'), '/datasets/DS_ProcessedCases')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/PL_Dataf')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -965,6 +965,36 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/TR_Ingest_ecdc_data')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "PL_HTTPS_to_DBLake",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Minute",
+						"interval": 15,
+						"startTime": "2021-02-05T04:32:00",
+						"timeZone": "Central Standard Time (Mexico)"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/PL_HTTPS_to_DBLake')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/TR_ingest_hospital_admissions_data')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -990,43 +1020,12 @@
 						"frequency": "Day",
 						"interval": 1,
 						"startTime": "2021-02-04T19:15:00",
-						"timeZone": "Central Standard Time (Mexico)",
-						"schedule": {}
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/PL_HTTPS_to_DBLake_Parameters')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/TR_Ingest_ecdc_data')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "PL_HTTPS_to_DBLake",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Minute",
-						"interval": 1,
-						"startTime": "2021-02-05T04:32:00",
 						"timeZone": "Central Standard Time (Mexico)"
 					}
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/PL_HTTPS_to_DBLake')]"
+				"[concat(variables('factoryId'), '/pipelines/PL_HTTPS_to_DBLake_Parameters')]"
 			]
 		}
 	]
