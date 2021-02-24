@@ -1,4 +1,12 @@
 {
 	"name": "ADF-TST-INT",
+	"properties": {
+		"globalParameters": {
+			"DailyStartDay": {
+				"type": "string",
+				"value": "now()"
+			}
+		}
+	},
 	"location": "westus"
 }
