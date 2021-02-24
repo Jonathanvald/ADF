@@ -23,10 +23,6 @@
 			"type": "string",
 			"defaultValue": "@{linkedService().sourceBaseURL}"
 		},
-		"TR_Ingest_ecdc_data_properties_PL_HTTPS_to_DBLake_copy1_parameters_StartTime": {
-			"type": "string",
-			"defaultValue": "hjg"
-		},
 		"TR_ingest_hospital_admissions_data_properties_PL_HTTPS_to_DBLake_Parameters_parameters_sourceRelativeURL": {
 			"type": "string",
 			"defaultValue": "covid19/nationalcasedeath/csv"
@@ -969,47 +965,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/TR_Ingest_ecdc_data')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "PL_HTTPS_to_DBLake",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					},
-					{
-						"pipelineReference": {
-							"referenceName": "PL_HTTPS_to_DBLake_copy1",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"StartTime": "[parameters('TR_Ingest_ecdc_data_properties_PL_HTTPS_to_DBLake_copy1_parameters_StartTime')]"
-						}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Minute",
-						"interval": 15,
-						"startTime": "2021-02-05T04:32:00",
-						"endTime": "2021-02-23T16:02:00",
-						"timeZone": "Central Standard Time (Mexico)"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/PL_HTTPS_to_DBLake')]",
-				"[concat(variables('factoryId'), '/pipelines/PL_HTTPS_to_DBLake_copy1')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/TR_ingest_hospital_admissions_data')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -1042,6 +997,36 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/PL_HTTPS_to_DBLake_Parameters')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TR_Ingest_ecdc_data')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "PL_HTTPS_to_DBLake",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Minute",
+						"interval": 1,
+						"startTime": "2021-02-05T04:32:00",
+						"timeZone": "Central Standard Time (Mexico)"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/PL_HTTPS_to_DBLake')]"
 			]
 		}
 	]

@@ -1,1 +1,6 @@
-{}
+{
+	"DailyStartDay": {
+		"type": "string",
+		"value": "now()"
+	}
+}

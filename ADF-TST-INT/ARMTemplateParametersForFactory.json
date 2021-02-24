@@ -17,9 +17,6 @@
 		"ls_http_covid_properties_typeProperties_url": {
 			"value": "@{linkedService().sourceBaseURL}"
 		},
-		"TR_Ingest_ecdc_data_properties_PL_HTTPS_to_DBLake_copy1_parameters_StartTime": {
-			"value": "hjg"
-		},
 		"TR_ingest_hospital_admissions_data_properties_PL_HTTPS_to_DBLake_Parameters_parameters_sourceRelativeURL": {
 			"value": "covid19/nationalcasedeath/csv"
 		},
