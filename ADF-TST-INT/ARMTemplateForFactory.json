@@ -1018,13 +1018,6 @@
 			"properties": {
 				"annotations": [],
 				"runtimeState": "Stopped",
-				"pipeline": {
-					"pipelineReference": {
-						"referenceName": "PL_HTTPS_to_DBLake",
-						"type": "PipelineReference"
-					},
-					"parameters": {}
-				},
 				"type": "TumblingWindowTrigger",
 				"typeProperties": {
 					"frequency": "Minute",
@@ -1048,7 +1041,6 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/PL_HTTPS_to_DBLake')]",
 				"[concat(variables('factoryId'), '/triggers/T_MorningTrigger')]"
 			]
 		}
